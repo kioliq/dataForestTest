@@ -1,0 +1,21 @@
+<!--Простий фронтенд, який реєструє візит на сторінку через API бекенду і показує загальну кількість -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visits</title>
+</head>
+<body>
+  <h1>Hello Dataforest</h1>
+  <p>Visits: <span id="visits">...</span></p>
+
+  <script>
+    const el = document.getElementById("visits");
+
+    fetch("/api/visits", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => { el.textContent = data.visits; })
+      .catch(() => { el.textContent = "API unavailable"; });
+  </script>
+</body>
+</html>
