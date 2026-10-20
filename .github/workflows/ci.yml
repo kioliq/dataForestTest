@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v4
+
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  compose:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docker
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Start test
+        run: |
+          cp .env.example .env
+          docker compose up -d --build --wait
+
+      - name: Smoke test
+        run: |
+          curl -fsS http://localhost/
+          curl -fsS --retry 10 --retry-all-errors --retry-delay 2 -X POST http://localhost/api/visits
+
+      - name: Show logs
+        if: failure()
+        run: docker compose logs
