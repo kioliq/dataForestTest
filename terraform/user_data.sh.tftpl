@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json <<EOF
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+EOF
+
+curl -fsSL https://get.docker.com | sh
+
+git clone --depth 1 ${repo_url} /opt/app
+cd /opt/app/docker
+
+cat > .env <<EOF
+POSTGRES_DB=app
+POSTGRES_USER=app
+POSTGRES_PASSWORD=${db_password}
+EOF
+chmod 600 .env
+
+docker compose up -d --build
