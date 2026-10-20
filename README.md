@@ -20,3 +20,10 @@ EC2 при старті через user_data ставить Docker, клонує
 Локально: **cd docker && cp .env.example .env && docker compose up -d --build**
 
 В AWS: **cd terraform && terraform init && terraform apply**
+
+## Покращення для проду
+- HTTPS між CloudFront і EC2
+- remote state в S3
+- RDS замість postgres в контейнері
+- збирати образи в CI і пушити в registry, а не білдити на сервері
+- додати моніторинг і алерти
